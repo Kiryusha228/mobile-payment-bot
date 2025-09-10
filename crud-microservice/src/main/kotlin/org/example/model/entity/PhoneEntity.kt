@@ -13,7 +13,7 @@ class PhoneEntity(
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    var user: UserEntity,
+    var user: UserEntity? = null,
 
     @Column(name = "phone_number", nullable = false)
     var phoneNumber: String

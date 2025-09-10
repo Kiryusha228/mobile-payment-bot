@@ -1,6 +1,8 @@
 package org.example.model.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDateTime
 
 @Entity
@@ -14,11 +16,12 @@ class PaymentEntity(
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    var user: UserEntity,
+    var user: UserEntity? = null,
 
     @ManyToOne
-    @JoinColumn(name = "phone_id", nullable = false)
-    var phone: PhoneEntity,
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "phone_id", nullable = true)
+    var phone: PhoneEntity? = null,
 
     @Column(name = "amount", nullable = false)
     var amount: Double,

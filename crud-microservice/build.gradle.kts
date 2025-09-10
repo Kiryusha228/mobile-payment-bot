@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("kapt")
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
     id("org.springframework.boot") version "3.3.3"
@@ -11,6 +12,10 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -32,6 +37,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     //swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    //mapstruct
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
+
 }
 
 
