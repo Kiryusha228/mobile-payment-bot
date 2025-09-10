@@ -21,7 +21,7 @@ class PaymentEntity(
     var phone: PhoneEntity,
 
     @Column(name = "amount", nullable = false)
-    var amount: Int,
+    var amount: Double,
 
     @Column(name = "provided_at", nullable = false)
     var providedAt: LocalDateTime,
