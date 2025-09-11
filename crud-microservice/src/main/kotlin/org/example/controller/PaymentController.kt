@@ -1,6 +1,7 @@
 package org.example.controller
 
 import org.example.model.dto.CreatePaymentDto
+import org.example.model.dto.PaymentDto
 import org.example.model.entity.PaymentEntity
 import org.example.service.PaymentService
 import org.springframework.web.bind.annotation.*
@@ -16,7 +17,7 @@ class PaymentController (
     }
 
     @GetMapping("/get/{paymentId}")
-    fun getPhoneById(@PathVariable paymentId: Long): PaymentEntity {
+    fun getPhoneById(@PathVariable paymentId: Long): PaymentDto {
         return paymentService.getPaymentById(paymentId)
     }
 

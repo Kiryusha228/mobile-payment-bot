@@ -16,5 +16,8 @@ class PhoneEntity(
     var user: UserEntity? = null,
 
     @Column(name = "phone_number", nullable = false)
-    var phoneNumber: String
+    var phoneNumber: String,
+
+    @Column(name = "is_main", nullable = false)
+    var isMain: Boolean = false
 )

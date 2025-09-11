@@ -2,6 +2,7 @@ package org.example.service
 
 import org.example.mapper.PaymentMapper
 import org.example.model.dto.CreatePaymentDto
+import org.example.model.dto.PaymentDto
 import org.example.model.entity.PaymentEntity
 import org.example.repository.PaymentRepository
 import org.example.repository.PhoneRepository
@@ -24,8 +25,9 @@ class PaymentService(
         return paymentRepository.save(paymentEntity)
     }
 
-    fun getPaymentById(paymentId: Long): PaymentEntity {
-        return paymentRepository.findById(paymentId).get()
+    fun getPaymentById(paymentId: Long): PaymentDto {
+        val payment = paymentRepository.findById(paymentId).get()
+        return paymentMapper.toDto(payment)
     }
 
     @Transactional
