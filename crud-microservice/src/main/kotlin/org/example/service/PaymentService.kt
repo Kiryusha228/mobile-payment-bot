@@ -17,21 +17,30 @@ class PaymentService(
     val phoneRepository: PhoneRepository,
     val paymentMapper: PaymentMapper
 ) {
-    @Transactional
-    fun createPayment(createPaymentDto: CreatePaymentDto) : PaymentEntity {
-        val paymentEntity = paymentMapper.toEntity(createPaymentDto)
-        paymentEntity.user = userRepository.findById(createPaymentDto.userId).get()
-        paymentEntity.phone = phoneRepository.findById(createPaymentDto.phoneId).get()
-        return paymentRepository.save(paymentEntity)
-    }
 
-    fun getPaymentById(paymentId: Long): PaymentDto {
-        val payment = paymentRepository.findById(paymentId).get()
-        return paymentMapper.toDto(payment)
-    }
+//    @Transactional
+//    fun createPayment(createPaymentDto: CreatePaymentDto) : PaymentEntity {
+//        val paymentEntity = paymentMapper.toEntity(createPaymentDto)
+//        paymentEntity.user = userRepository.findById(createPaymentDto.userId).get()
+//        paymentEntity.phone = phoneRepository.findById(createPaymentDto.phoneId).get()
+//        return paymentRepository.save(paymentEntity)
+//    }
+    @Transactional
+    fun createPayment(createPaymentDto: CreatePaymentDto): PaymentEntity =
+        paymentMapper.toEntity(createPaymentDto).apply {
+            user = userRepository.findById(createPaymentDto.userId).get()
+            phone = phoneRepository.findById(createPaymentDto.phoneId).get()
+        }.let {
+            paymentRepository.save(it)
+        }
+
+
+    fun getPaymentById(paymentId: Long): PaymentDto =
+        paymentRepository.findById(paymentId).get().let {
+            paymentMapper.toDto(it)
+        }
 
     @Transactional
-    fun deletePaymentById(paymentId: Long) {
+    fun deletePaymentById(paymentId: Long) =
         paymentRepository.deleteById(paymentId)
-    }
 }

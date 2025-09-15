@@ -6,5 +6,5 @@ data class PaymentDto(
     val id: Long,
     val amount: Double,
     val providedAt: LocalDateTime,
-    val providerTxId: Long
+    val providerTxId: Long,
 )

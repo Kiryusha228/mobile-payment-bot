@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/payment")
 class PaymentController (
-    val paymentService: PaymentService
+    private val paymentService: PaymentService
 ) {
     @PostMapping("/create")
-    fun createPayment(@RequestBody createPaymentDto: CreatePaymentDto) : PaymentEntity {
-        return paymentService.createPayment(createPaymentDto)
-    }
+    fun createPayment(@RequestBody createPaymentDto: CreatePaymentDto) : PaymentEntity =
+        paymentService.createPayment(createPaymentDto)
 
     @GetMapping("/get/{paymentId}")
     fun getPhoneById(@PathVariable paymentId: Long): PaymentDto {
