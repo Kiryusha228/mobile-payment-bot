@@ -1,6 +1,7 @@
 package org.example.model.entity
 
 import jakarta.persistence.*
+import org.example.enums.Provider
 
 @Entity
 @Table(name = "phone")
@@ -17,6 +18,9 @@ class PhoneEntity(
 
     @Column(name = "phone_number", nullable = false)
     var phoneNumber: String,
+
+    @Column(name = "provider", nullable = false)
+    var provider: Provider,
 
     @Column(name = "is_main", nullable = false)
     var isMain: Boolean = false

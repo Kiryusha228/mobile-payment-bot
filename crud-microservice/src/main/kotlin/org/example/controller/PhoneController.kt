@@ -17,7 +17,7 @@ class PhoneController (
         return phoneService.createPhone(createPhoneDto)
     }
 
-    @PatchMapping("/change")
+    @PatchMapping("/main/change")
     fun changeMainPhone(@RequestBody changeMainPhoneDto: ChangeMainPhoneDto) {
         return phoneService.changeMainPhone(changeMainPhoneDto)
     }
