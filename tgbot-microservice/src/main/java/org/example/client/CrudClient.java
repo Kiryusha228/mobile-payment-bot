@@ -1,0 +1,27 @@
+package org.example.client;
+
+import lombok.RequiredArgsConstructor;
+
+import org.example.config.WebClientConfig;
+import org.example.model.dto.CreateUserDto;
+import org.example.model.entity.UserEntity;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class CrudClient {
+    private final WebClientConfig webClient;
+
+    public UserEntity createUser(CreateUserDto createUserDto) {
+        return webClient.getWebClient()
+                .post()
+                .uri("/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(createUserDto)
+                .retrieve()
+                .bodyToMono(UserEntity.class)
+                .block();
+    }
+
+}
