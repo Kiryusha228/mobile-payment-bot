@@ -16,7 +16,7 @@ public class CrudClient {
     public UserEntity createUser(CreateUserDto createUserDto) {
         return webClient.getWebClient()
                 .post()
-                .uri("/create")
+                .uri("/user/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(createUserDto)
                 .retrieve()
