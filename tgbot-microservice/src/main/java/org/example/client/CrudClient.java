@@ -49,6 +49,15 @@ public class CrudClient {
                 .block();
     }
 
+    public Long getUserIdByChatId(Long chatId) {
+        return webClient.getWebClient()
+                .get()
+                .uri("/user/get/id/{chatId}", chatId)
+                .retrieve()
+                .bodyToMono(Long.class)
+                .block();
+    }
+
 
 
 

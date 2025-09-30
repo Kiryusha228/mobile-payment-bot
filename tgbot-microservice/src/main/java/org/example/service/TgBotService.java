@@ -1,7 +1,9 @@
 package org.example.service;
 
 import org.example.client.CrudClient;
+import org.example.enums.Provider;
 import org.example.enums.UserState;
+import org.example.model.dto.CreatePhoneDto;
 import org.example.model.dto.CreateUserDto;
 import org.example.properties.TgBotProperties;
 import org.springframework.stereotype.Service;
@@ -39,14 +41,13 @@ public class TgBotService extends TelegramLongPollingBot {
                 var text = update.getMessage().getText();
                 var chatId = update.getMessage().getChatId();
                 var username = update.getMessage().getFrom().getUserName();
+                var userState = userStates.get(chatId);
 
-                if ("WAIT_SUM".equals(userStates.get(chatId))) {
-                    handleAmountInput(chatId, text);
-                    return;
-                }
-
-                if ("WAIT_PHONE_NUMBER".equals(userStates.get(chatId))) {
-                    handlePhoneNumberInput(chatId, text);
+                if (userState != null) {
+                    switch (userState){
+                        case WAIT_SUM -> handleAmountInput(chatId, text);
+                        case WAIT_PHONE_NUMBER -> handlePhoneNumberInput(chatId, text);
+                    }
                     return;
                 }
 
@@ -62,7 +63,7 @@ public class TgBotService extends TelegramLongPollingBot {
                         sendPhoneList(chatId);
                         break;
                     case "Добавить телефон":
-                        sendOperatorChoice(chatId);
+                        sendProviderChoice(chatId);
                         break;
                     default:
                         execute(SendMessage.builder()
@@ -77,8 +78,8 @@ public class TgBotService extends TelegramLongPollingBot {
                 if (callbackData.startsWith("pay_")) {
                     payPhone(chatId, callbackData);
 
-                } else if (callbackData.startsWith("operator_")) {
-                    handleOperatorChoice(chatId, callbackData);
+                } else if (callbackData.startsWith("provider_")) {
+                    handleProviderChoice(chatId, callbackData);
                 }
                 else if (callbackData.startsWith("cancel_")) {
                     userStates.remove(chatId);
@@ -151,18 +152,18 @@ public class TgBotService extends TelegramLongPollingBot {
         execute(msg);
     }
 
-    private void sendOperatorChoice(Long chatId) throws TelegramApiException {
+    private void sendProviderChoice(Long chatId) throws TelegramApiException {
         var markup = new InlineKeyboardMarkup();
 
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        var rows = new ArrayList<List<InlineKeyboardButton>>();
         rows.add(List.of(
                 InlineKeyboardButton.builder()
                         .text("📡 Beeline")
-                        .callbackData("operator_beeline")
+                        .callbackData("provider_beeline")
                         .build(),
                 InlineKeyboardButton.builder()
                         .text("📡 T2")
-                        .callbackData("operator_t2")
+                        .callbackData("provider_t2")
                         .build()
         ));
 
@@ -177,8 +178,8 @@ public class TgBotService extends TelegramLongPollingBot {
         execute(msg);
     }
 
-    private void handleOperatorChoice(Long chatId, String callbackData) throws TelegramApiException {
-        String operator = callbackData.replace("operator_", "");
+    private void handleProviderChoice(Long chatId, String callbackData) throws TelegramApiException {
+        var operator = callbackData.replace("provider_", "");
 
         userContext.put(chatId, operator);
 
@@ -191,9 +192,9 @@ public class TgBotService extends TelegramLongPollingBot {
     }
 
     private void handlePhoneNumberInput(Long chatId, String phoneText) throws TelegramApiException {
-        String cleanPhone = phoneText.replaceAll("[^0-9]", "");
+        var cleanPhone = phoneText.replaceAll("[^0-9]", "");
 
-        if (cleanPhone.length() < 10 || cleanPhone.length() > 11) {
+        if (cleanPhone.length() != 10) {
             execute(SendMessage.builder()
                     .chatId(chatId.toString())
                     .text("❌ Неверный формат номера. Введите 10 цифр.\nПример: 9261234567")
@@ -201,20 +202,37 @@ public class TgBotService extends TelegramLongPollingBot {
             return;
         }
 
-        String operator = userContext.get(chatId);
+        var provider = getEnumProvider(userContext.get(chatId));
+        var userId = crudClient.getUserIdByChatId(chatId);
 
-        //crudClient.createPhone();
-
-        execute(SendMessage.builder()
-                .chatId(chatId.toString())
-                .text("✅ Телефон добавлен!\n\n" +
-                        "📱 Номер: " + cleanPhone)
-                .build());
+        try {
+            crudClient.createPhone(new CreatePhoneDto(userId, cleanPhone, provider));
+            execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("✅ Телефон добавлен!\n\n" +
+                            "📱 Номер: " + cleanPhone)
+                    .build());
+        } catch (Exception e) {
+            execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("❌ Ошибка добавления телефона!\n\n" +
+                            "📱 Номер: " + cleanPhone)
+                    .build());
+            e.printStackTrace();
+        }
 
         userStates.remove(chatId);
         userContext.remove(chatId);
 
         sendMainMenu(chatId);
+    }
+
+    private Provider getEnumProvider(String provider) {
+        return switch (provider) {
+            case "t2" -> Provider.T2;
+            case "beeline" -> Provider.BEELINE;
+            default -> throw new IllegalStateException("Неподходящий провайдер:" + provider);
+        };
     }
 
     private void handleAmountInput(Long chatId, String amountText) throws TelegramApiException {
