@@ -21,6 +21,9 @@ class UserService(
         return userRepository.findById(userId).get()
     }
 
+    fun getUserIdByChatId(chatId: Long): Long =
+        userRepository.findByChatId(chatId).id?: throw IllegalArgumentException("Пользователь не найден")
+
     @Transactional
     fun deleteUserById(userId: Long) {
         userRepository.deleteById(userId)

@@ -20,6 +20,10 @@ class UserController (
         return userService.getUserById(userId)
     }
 
+    @GetMapping("/get/id/{chatId}")
+    fun getUserIdByChatId(@PathVariable chatId: Long): Long =
+        userService.getUserIdByChatId(chatId)
+
     @DeleteMapping("/delete/{userId}")
     fun deleteUserById(@PathVariable userId: Long) {
         userService.deleteUserById(userId)
