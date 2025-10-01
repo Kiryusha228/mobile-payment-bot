@@ -6,10 +6,13 @@ import org.example.config.WebClientConfig;
 import org.example.model.dto.ChangeMainPhoneDto;
 import org.example.model.dto.CreatePhoneDto;
 import org.example.model.dto.CreateUserDto;
+import org.example.model.dto.PhoneDto;
 import org.example.model.entity.PhoneEntity;
 import org.example.model.entity.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -49,6 +52,15 @@ public class CrudClient {
                 .block();
     }
 
+    public PhoneDto getMainPhoneByChatId(Long chatId) {
+        return webClient.getWebClient()
+                .get()
+                .uri("/phone/get/main/{chatId}", chatId)
+                .retrieve()
+                .bodyToMono(PhoneDto.class)
+                .block();
+    }
+
     public Long getUserIdByChatId(Long chatId) {
         return webClient.getWebClient()
                 .get()
@@ -57,6 +69,27 @@ public class CrudClient {
                 .bodyToMono(Long.class)
                 .block();
     }
+
+    public List<PhoneDto> getPhonesByChatId(Long chatId) {
+        return webClient.getWebClient()
+                .get()
+                .uri("phone/get/phones/{chatId}", chatId)
+                .retrieve()
+                .bodyToFlux(PhoneDto.class)
+                .collectList()
+                .block();
+    }
+
+    public PhoneDto getPhoneById(Long phoneId) {
+        return webClient.getWebClient()
+                .get()
+                .uri("phone/get/{phoneId}", phoneId)
+                .retrieve()
+                .bodyToMono(PhoneDto.class)
+                .block();
+    }
+
+
 
 
 

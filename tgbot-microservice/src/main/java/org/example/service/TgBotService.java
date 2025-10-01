@@ -3,8 +3,10 @@ package org.example.service;
 import org.example.client.CrudClient;
 import org.example.enums.Provider;
 import org.example.enums.UserState;
+import org.example.model.dto.ChangeMainPhoneDto;
 import org.example.model.dto.CreatePhoneDto;
 import org.example.model.dto.CreateUserDto;
+import org.example.model.entity.PhoneEntity;
 import org.example.properties.TgBotProperties;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -44,7 +46,7 @@ public class TgBotService extends TelegramLongPollingBot {
                 var userState = userStates.get(chatId);
 
                 if (userState != null) {
-                    switch (userState){
+                    switch (userState) {
                         case WAIT_SUM -> handleAmountInput(chatId, text);
                         case WAIT_PHONE_NUMBER -> handlePhoneNumberInput(chatId, text);
                     }
@@ -53,8 +55,11 @@ public class TgBotService extends TelegramLongPollingBot {
 
                 switch (text) {
                     case "/start":
-                        crudClient.createUser(new CreateUserDto(chatId, username));
-                        sendMainMenu(chatId);
+                        try {
+                            crudClient.createUser(new CreateUserDto(chatId, username));
+                        } finally {
+                            sendMainMenu(chatId);
+                        }
                         break;
                     case "Оплатить основной телефон":
                         //payPhone(chatId, );
@@ -77,11 +82,11 @@ public class TgBotService extends TelegramLongPollingBot {
 
                 if (callbackData.startsWith("pay_")) {
                     payPhone(chatId, callbackData);
-
                 } else if (callbackData.startsWith("provider_")) {
                     handleProviderChoice(chatId, callbackData);
-                }
-                else if (callbackData.startsWith("cancel_")) {
+                } else if (callbackData.startsWith("main_")) {
+                    handleChangeMainPhone(chatId, callbackData);
+                } else if (callbackData.startsWith("cancel_")) {
                     userStates.remove(chatId);
                     userContext.remove(chatId);
 
@@ -122,24 +127,44 @@ public class TgBotService extends TelegramLongPollingBot {
         userStates.put(chatId, UserState.WAIT_SUM);
         userContext.put(chatId, phoneId);
 
+        var phone = crudClient.getPhoneById(Long.parseLong(phoneId));
+
         execute(SendMessage.builder()
                 .chatId(chatId.toString())
-                .text("Введите сумму для телефона: " + phoneId)
+                .text("Введите сумму для телефона: " + phone.getPhoneNumber())
                 .build());
     }
 
     private void sendPhoneList(Long chatId) throws TelegramApiException {
+        var phones = crudClient.getPhonesByChatId(chatId);
+
+        if (phones.isEmpty()) {
+            var msg = SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("Список телефонов пуст!")
+                    .build();
+            execute(msg);
+            return;
+        }
+
         var markup = new InlineKeyboardMarkup();
 
         var rows = new ArrayList<List<InlineKeyboardButton>>();
-        rows.add(List.of(InlineKeyboardButton.builder()
-                .text("📞 9261112233 🟢")
-                .callbackData("confirm_phone1")
-                .build()));
-        rows.add(List.of(InlineKeyboardButton.builder()
-                .text("📞 9264445566 🔴")
-                .callbackData("confirm_phone2")
-                .build()));
+
+        for (var phone : phones) {
+            rows.add(
+                    List.of(
+                            InlineKeyboardButton.builder()
+                                    .text("📞 " + phone.getPhoneNumber())
+                                    .callbackData("pay_" + phone.getId())
+                                    .build(),
+                            InlineKeyboardButton.builder()
+                                    .text(phone.getMain() ? "🟢" : "🔴")
+                                    .callbackData("main_" + phone.getId())
+                                    .build()
+                    )
+            );
+        }
 
         markup.setKeyboard(rows);
 
@@ -158,11 +183,11 @@ public class TgBotService extends TelegramLongPollingBot {
         var rows = new ArrayList<List<InlineKeyboardButton>>();
         rows.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("📡 Beeline")
+                        .text("🐝Beeline")
                         .callbackData("provider_beeline")
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text("📡 T2")
+                        .text("👨🏻‍🦳T2")
                         .callbackData("provider_t2")
                         .build()
         ));
@@ -204,13 +229,15 @@ public class TgBotService extends TelegramLongPollingBot {
 
         var provider = getEnumProvider(userContext.get(chatId));
         var userId = crudClient.getUserIdByChatId(chatId);
+        Long phoneId = null;
 
         try {
-            crudClient.createPhone(new CreatePhoneDto(userId, cleanPhone, provider));
+            var phone = crudClient.createPhone(new CreatePhoneDto(userId, cleanPhone, provider));
+            phoneId = phone.getId();
             execute(SendMessage.builder()
                     .chatId(chatId.toString())
                     .text("✅ Телефон добавлен!\n\n" +
-                            "📱 Номер: " + cleanPhone)
+                            "📱 Номер: " + phone.getPhoneNumber())
                     .build());
         } catch (Exception e) {
             execute(SendMessage.builder()
@@ -219,6 +246,12 @@ public class TgBotService extends TelegramLongPollingBot {
                             "📱 Номер: " + cleanPhone)
                     .build());
             e.printStackTrace();
+        }
+
+        try {
+            crudClient.getMainPhoneByChatId(chatId);
+        } catch (Exception ex) {
+            crudClient.changeMainPhone(new ChangeMainPhoneDto(chatId, phoneId));
         }
 
         userStates.remove(chatId);
@@ -269,6 +302,12 @@ public class TgBotService extends TelegramLongPollingBot {
 
         userStates.remove(chatId);
         userContext.remove(chatId);
+    }
+
+    private void handleChangeMainPhone(Long chatId, String callbackData) throws TelegramApiException {
+        var phoneId = Long.parseLong(callbackData.replace("main_", ""));
+        crudClient.changeMainPhone(new ChangeMainPhoneDto(chatId, phoneId));
+        sendPhoneList(chatId);
     }
 
     @Override
