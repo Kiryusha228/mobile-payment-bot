@@ -8,6 +8,7 @@ import org.example.model.dto.CreatePhoneDto;
 import org.example.model.dto.CreateUserDto;
 import org.example.model.entity.PhoneEntity;
 import org.example.properties.TgBotProperties;
+import org.example.properties.YoomoneyProperties;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,15 +25,17 @@ import java.util.*;
 @Service
 public class TgBotService extends TelegramLongPollingBot {
     private final TgBotProperties tgBotProperties;
+    private final YoomoneyProperties yoomoneyProperties;
 
     private final CrudClient crudClient;
 
     private final Map<Long, UserState> userStates = new HashMap<>();
     private final Map<Long, String> userContext = new HashMap<>();
 
-    public TgBotService(TgBotProperties tgBotProperties, CrudClient crudClient) {
+    public TgBotService(TgBotProperties tgBotProperties, YoomoneyProperties yoomoneyProperties, CrudClient crudClient) {
         super(tgBotProperties.getToken());
         this.tgBotProperties = tgBotProperties;
+        this.yoomoneyProperties = yoomoneyProperties;
         this.crudClient = crudClient;
     }
 
@@ -131,7 +134,7 @@ public class TgBotService extends TelegramLongPollingBot {
 
         execute(SendMessage.builder()
                 .chatId(chatId.toString())
-                .text("Введите сумму для телефона: " + phone.getPhoneNumber())
+                .text("Введите сумму для пополнения телефона: +7" + phone.getPhoneNumber())
                 .build());
     }
 
@@ -155,7 +158,7 @@ public class TgBotService extends TelegramLongPollingBot {
             rows.add(
                     List.of(
                             InlineKeyboardButton.builder()
-                                    .text("📞 " + phone.getPhoneNumber())
+                                    .text("📞 +7" + phone.getPhoneNumber())
                                     .callbackData("pay_" + phone.getId())
                                     .build(),
                             InlineKeyboardButton.builder()
@@ -212,7 +215,7 @@ public class TgBotService extends TelegramLongPollingBot {
 
         execute(SendMessage.builder()
                 .chatId(chatId.toString())
-                .text("Введите номер телефона, без 8")
+                .text("Введите номер телефона, без 8(+7)")
                 .build());
     }
 
@@ -237,13 +240,13 @@ public class TgBotService extends TelegramLongPollingBot {
             execute(SendMessage.builder()
                     .chatId(chatId.toString())
                     .text("✅ Телефон добавлен!\n\n" +
-                            "📱 Номер: " + phone.getPhoneNumber())
+                            "📱 Номер: +7" + phone.getPhoneNumber())
                     .build());
         } catch (Exception e) {
             execute(SendMessage.builder()
                     .chatId(chatId.toString())
                     .text("❌ Ошибка добавления телефона!\n\n" +
-                            "📱 Номер: " + cleanPhone)
+                            "📱 Номер: +7" + cleanPhone)
                     .build());
             e.printStackTrace();
         }
@@ -282,19 +285,19 @@ public class TgBotService extends TelegramLongPollingBot {
             return;
         }
 
-        var payUrl = "https://yoomoney.ru/pay?phone=" + phoneId + "&amount=" + amount;
+        amount += amount * 0.031; //Проценты
 
         var markup = new InlineKeyboardMarkup();
         var payBtn = InlineKeyboardButton.builder()
                 .text("Оплатить " + amount + " ₽")
-                .url(payUrl)
+                .url(yoomoneyProperties.getPaymentLink() + amount)
                 .build();
 
         markup.setKeyboard(List.of(List.of(payBtn)));
 
         var msg = SendMessage.builder()
                 .chatId(chatId.toString())
-                .text("Нажмите кнопку для перехода к оплате:")
+                .text("Нажмите кнопку для перехода к оплате (Комиссия сервиса 3%):")
                 .replyMarkup(markup)
                 .build();
 
