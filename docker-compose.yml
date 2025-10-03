@@ -14,3 +14,20 @@ services:
       - 'POSTGRES_DB=${DB_NAME}'
     volumes:
       - payment-db:/var/lib/postgresql/data
+
+  crud-microservice:
+      container_name: 'crud-microservice'
+      image: 'crud-microservice'
+      build:
+        context: ./
+        dockerfile: 'crud-microservice/Dockerfile'
+      env_file:
+        - .env
+      environment:
+        - JAVA_OPTS=-Xmx512M
+        - SPRING_DATASOURCE_URL=${DB_LINK_BACK}
+        - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+        - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      ports:
+        - "8080:8080"
+      restart: on-failure
