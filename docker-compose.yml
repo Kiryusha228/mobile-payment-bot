@@ -1,5 +1,6 @@
 volumes:
   payment-db:
+  cloudpub-config:
 services:
   payment-db:
     image: 'postgres:latest'
@@ -31,3 +32,16 @@ services:
       ports:
         - "8080:8080"
       restart: on-failure
+
+  # Агент CloudPub для публикации обоих сервисов
+  cloudpub:
+    image: cloudpub/cloudpub:latest-arm64
+    restart: unless-stopped
+    environment:
+      - TOKEN=${CLOUDPUB_API_KEY}
+      - HTTP=crud-microservice:8080
+    command: run
+    depends_on:
+      - crud-microservice
+    volumes:
+      - cloudpub-config:/home/cloudpub
