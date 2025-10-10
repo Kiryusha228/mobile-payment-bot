@@ -23,6 +23,7 @@ class YoomoneyWebhookController(
         println(params)
         val response = webhookHandlerService.parseYoomoneyWebhookResponse(params)
 
+        println(yoomoneyProperties.webhookSecret)
         if (response.sha1Hash != yoomoneyProperties.webhookSecret){
             return ResponseEntity("ERROR", HttpStatus.LOCKED)
         }
