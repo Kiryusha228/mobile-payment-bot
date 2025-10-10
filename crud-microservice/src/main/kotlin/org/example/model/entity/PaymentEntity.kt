@@ -30,5 +30,5 @@ class PaymentEntity(
     var providedAt: LocalDateTime,
 
     @Column(name = "provider_tx_id", nullable = false)
-    var providerTxId: Long
+    var providerTxId: String
 )

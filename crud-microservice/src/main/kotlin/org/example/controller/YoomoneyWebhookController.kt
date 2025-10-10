@@ -1,5 +1,9 @@
 package org.example.controller
 
+import org.example.model.dto.CreatePaymentDto
+import org.example.properties.YoomoneyProperties
+import org.example.service.PaymentService
+import org.example.service.WebhookHandlerService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -9,21 +13,23 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/webhook/yoomoney")
-class YoomoneyWebhookController {
-
+class YoomoneyWebhookController(
+    val paymentService: PaymentService,
+    val webhookHandlerService: WebhookHandlerService,
+    val yoomoneyProperties: YoomoneyProperties
+) {
     @PostMapping
     fun handleWebhook(@RequestParam params: Map<String, String>): ResponseEntity<String> {
         println(params)
+        val response = webhookHandlerService.parseYoomoneyWebhookResponse(params)
 
-        val status = params["notification_type"] ?: "unknown"
-        val amount = params["amount"]
-        val operationId = params["operation_id"]
-        val label = params["label"]
-        val sha1Hash = params["sha1_hash"]
+        if (response.sha1Hash != yoomoneyProperties.webhookSecret){
+            return ResponseEntity("ERROR", HttpStatus.LOCKED)
+        }
 
-        //todo сделать валидацию
-
-        println("Status: $status, Amount: $amount, OperationId: $operationId, Label: $label")
+        paymentService.createPayment(CreatePaymentDto(
+            response.userId, response.phoneId, response.amount, response.operationId
+        ))
 
         return ResponseEntity("OK", HttpStatus.OK)
     }
