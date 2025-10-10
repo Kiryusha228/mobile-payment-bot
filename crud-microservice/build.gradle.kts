@@ -40,8 +40,8 @@ dependencies {
     //mapstruct
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
-
-
+    //kafka
+    implementation("org.springframework.kafka:spring-kafka")
 }
 
 
