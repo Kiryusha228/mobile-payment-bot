@@ -273,6 +273,8 @@ public class TgBotService extends TelegramLongPollingBot {
 
     private void handleAmountInput(Long chatId, String amountText) throws TelegramApiException {
         var phoneId = userContext.get(chatId);
+        var userId = crudClient.getUserIdByChatId(chatId);
+        //var userId =
 
         double amount;
         try {
@@ -288,9 +290,12 @@ public class TgBotService extends TelegramLongPollingBot {
         amount += amount * 0.031; //Проценты
 
         var markup = new InlineKeyboardMarkup();
+
+        var link = String.format(yoomoneyProperties.getPaymentLink() +"%s&label=phone%s#user%s", amount, phoneId, userId);
+
         var payBtn = InlineKeyboardButton.builder()
                 .text("Оплатить " + amount + " ₽")
-                .url(yoomoneyProperties.getPaymentLink() + amount)
+                .url(link)
                 .build();
 
         markup.setKeyboard(List.of(List.of(payBtn)));

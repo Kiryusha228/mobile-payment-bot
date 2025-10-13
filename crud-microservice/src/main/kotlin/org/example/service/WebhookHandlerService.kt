@@ -25,8 +25,8 @@ class WebhookHandlerService {
 
     private fun String.parsePhoneAndUser(): Pair<Long, Long> {
         val parts = split("#")
-        val phone = parts.getOrNull(0)?.removePrefix("phone=")?.toLongOrNull() ?: 0L
-        val user = parts.getOrNull(1)?.removePrefix("user=")?.toLongOrNull() ?: 0L
+        val phone = parts.getOrNull(0)?.removePrefix("phone")?.toLongOrNull() ?: 0L
+        val user = parts.getOrNull(1)?.removePrefix("user")?.toLongOrNull() ?: 0L
         return phone to user
     }
 }
