@@ -65,7 +65,7 @@ public class TgBotService extends TelegramLongPollingBot {
                         }
                         break;
                     case "Оплатить основной телефон":
-                        //payPhone(chatId, );
+                        payMainPhone(chatId);
                         break;
                     case "Список телефонов":
                         sendPhoneList(chatId);
@@ -274,7 +274,6 @@ public class TgBotService extends TelegramLongPollingBot {
     private void handleAmountInput(Long chatId, String amountText) throws TelegramApiException {
         var phoneId = userContext.get(chatId);
         var userId = crudClient.getUserIdByChatId(chatId);
-        //var userId =
 
         double amount;
         try {
@@ -317,6 +316,36 @@ public class TgBotService extends TelegramLongPollingBot {
         crudClient.changeMainPhone(new ChangeMainPhoneDto(chatId, phoneId));
         sendPhoneList(chatId);
     }
+
+    private void payMainPhone(Long chatId) throws TelegramApiException {
+        try {
+            var mainPhone = crudClient.getMainPhoneByChatId(chatId);
+
+            if (mainPhone == null) {
+                execute(SendMessage.builder()
+                        .chatId(chatId.toString())
+                        .text("❌ У вас не установлен основной телефон.\nВыберите его в разделе 'Список телефонов'.")
+                        .build());
+                return;
+            }
+
+            userStates.put(chatId, UserState.WAIT_SUM);
+            userContext.put(chatId, String.valueOf(mainPhone.getId()));
+
+            execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("Введите сумму для пополнения основного телефона: +7" + mainPhone.getPhoneNumber())
+                    .build());
+
+        } catch (Exception e) {
+            execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("⚠️ Произошла ошибка при получении основного телефона.")
+                    .build());
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public String getBotUsername() {
