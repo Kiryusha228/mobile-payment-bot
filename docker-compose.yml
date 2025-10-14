@@ -29,8 +29,27 @@ services:
         - SPRING_DATASOURCE_URL=${DB_LINK_BACK}
         - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
         - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+        - KAFKA_HOST=${KAFKA_HOST}
       ports:
         - "8080:8080"
+      restart: on-failure
+
+  telegram-bot:
+      container_name: 'telegram-bot'
+      image: 'telegram-bot'
+      build:
+        context: ./
+        dockerfile: 'tgbot-microservice/Dockerfile'
+      env_file:
+        - .env
+      environment:
+        - JAVA_OPTS=-Xmx512M
+        - BOT_NAME=${BOT_NAME}
+        - BOT_TOKEN=${BOT_TOKEN}
+        - APP_API_URL=${APP_API_URL}
+        - KAFKA_HOST=${KAFKA_HOST}
+      ports:
+        - "8082:8082"
       restart: on-failure
 
   cloudpub:
@@ -63,5 +82,5 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_HOST}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
