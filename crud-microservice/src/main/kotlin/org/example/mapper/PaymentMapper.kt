@@ -12,5 +12,7 @@ interface PaymentMapper {
 
     @Mapping(target = "providedAt", expression = "java(java.time.LocalDateTime.now())")
     fun toEntity(createPaymentDto: CreatePaymentDto): PaymentEntity
+
+    @Mapping(target = "phoneId", source = "phone.id")
     fun toDto(paymentEntity: PaymentEntity): PaymentDto
 }

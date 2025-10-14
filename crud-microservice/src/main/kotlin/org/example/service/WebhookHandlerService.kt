@@ -12,9 +12,12 @@ class WebhookHandlerService {
         params.let {
             val (phone, user) = it["label"].orEmpty().parsePhoneAndUser()
 
+            val amountWithCommission = params["amount"]?.toDouble() ?: 0.0
+            val originalAmount = amountWithCommission / 1.031
+
             YoomoneyWebhookResponse(
                 status = it["notification_type"] ?: "unknown",
-                amount = it["amount"]?.toDouble() ?: 0.0,
+                amount = originalAmount,
                 operationId = it["operation_id"].orEmpty(),
                 dateTime = it["datetime"].orEmpty().let { it1 -> LocalDateTime.parse(it1, DateTimeFormatter.ISO_DATE_TIME) },
                 sha1Hash = it["sha1_hash"].orEmpty(),

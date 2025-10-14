@@ -3,10 +3,7 @@ package org.example.client;
 import lombok.RequiredArgsConstructor;
 
 import org.example.config.WebClientConfig;
-import org.example.model.dto.ChangeMainPhoneDto;
-import org.example.model.dto.CreatePhoneDto;
-import org.example.model.dto.CreateUserDto;
-import org.example.model.dto.PhoneDto;
+import org.example.model.dto.*;
 import org.example.model.entity.PhoneEntity;
 import org.example.model.entity.UserEntity;
 import org.springframework.http.MediaType;
@@ -86,6 +83,15 @@ public class CrudClient {
                 .uri("phone/get/{phoneId}", phoneId)
                 .retrieve()
                 .bodyToMono(PhoneDto.class)
+                .block();
+    }
+
+    public PaymentDto getPaymentById(Long paymentId) {
+        return webClient.getWebClient()
+                .get()
+                .uri("payment/get/{phoneId}", paymentId)
+                .retrieve()
+                .bodyToMono(PaymentDto.class)
                 .block();
     }
 

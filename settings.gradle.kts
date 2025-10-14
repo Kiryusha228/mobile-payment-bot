@@ -3,3 +3,4 @@ plugins {
 }
 rootProject.name = "mobile-payment-bot"
 include("crud-microservice")
+include("tgbot-microservice")

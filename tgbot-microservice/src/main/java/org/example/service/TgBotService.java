@@ -375,6 +375,13 @@ public class TgBotService extends TelegramLongPollingBot {
         }
     }
 
+    public void executeMessage(String text, Long chatId) throws TelegramApiException {
+        execute(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .build());
+    }
+
     @Override
     public String getBotUsername() {
         return tgBotProperties.getName();

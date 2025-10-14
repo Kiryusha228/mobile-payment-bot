@@ -1,7 +1,6 @@
 package org.example.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.config.ObjectMapperConfig;
 import org.example.config.WebClientConfig;
@@ -23,8 +22,8 @@ public class YoomoneyClient {
     private final T2Properties t2Properties;
     private final BeelineProperties beelineProperties;
 
-    public String requestPaymentT2(String phone, String sum) throws JsonProcessingException {
-        var response = webClient.getWebClient()
+    public PaymentResponseDto requestPaymentT2(String phone, String sum) throws JsonProcessingException {
+        return webClient.getWebClient()
                 .post()
                 .uri(yoomoneyProperties.getRequestPaymentLink())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + yoomoneyProperties.getToken())
@@ -39,14 +38,12 @@ public class YoomoneyClient {
                                 "&ShopArticleID=" + t2Properties.getShopArticleId()
                 )
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(PaymentResponseDto.class)
                 .block();
-
-        return objectMapper.getObjectMapper().readTree(response).get("request_id").asText();
     }
 
-    public String requestPaymentBeeline(String phone, String sum) throws JsonProcessingException {
-        var response = webClient.getWebClient()
+    public PaymentResponseDto requestPaymentBeeline(String phone, String sum) throws JsonProcessingException {
+        return webClient.getWebClient()
                 .post()
                 .uri(yoomoneyProperties.getRequestPaymentLink())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + yoomoneyProperties.getToken())
@@ -60,10 +57,8 @@ public class YoomoneyClient {
                                 "&ShopArticleID=" + beelineProperties.getShopArticleId()
                 )
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(PaymentResponseDto.class)
                 .block();
-
-        return objectMapper.getObjectMapper().readTree(response).get("request_id").asText();
     }
 
     public PaymentResponseDto processRequestPayment(String requestId) {

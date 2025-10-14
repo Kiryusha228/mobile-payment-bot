@@ -1,11 +1,9 @@
-package org.example.model.dto;
+package org.example.model.dto
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-@Data
-public class PaymentResponseDto {
-    private String status;
-    private String payment_id;
-    private String invoice_id;
-    private Double balance;
-}
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class PaymentResponseDto(
+    val status: String,
+    val request_id: String
+)
