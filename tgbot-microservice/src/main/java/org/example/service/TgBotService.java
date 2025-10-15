@@ -78,10 +78,10 @@ public class TgBotService extends TelegramLongPollingBot {
                         }
                         sendProviderChoice(chatId);
                     }
-                    default -> execute(SendMessage.builder()
-                            .chatId(chatId.toString())
-                            .text("🤔 Неизвестная команда, попробуйте снова.")
-                            .build());
+//                    default -> execute(SendMessage.builder()
+//                            .chatId(chatId.toString())
+//                            .text("🤔 Неизвестная команда, попробуйте снова.")
+//                            .build());
                 }
 
                 if (userState != null) {
@@ -276,7 +276,7 @@ public class TgBotService extends TelegramLongPollingBot {
 
         var markup = new InlineKeyboardMarkup();
         var link = String.format(
-                yoomoneyProperties.getPaymentLink() + "%s&label=phone%s#user%s",
+                yoomoneyProperties.getPaymentLink() + "%s&label=phone%s!user%s",
                 amount, phoneId, userId
         );
 

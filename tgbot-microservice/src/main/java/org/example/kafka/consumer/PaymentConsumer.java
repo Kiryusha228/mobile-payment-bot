@@ -19,15 +19,18 @@ public class PaymentConsumer {
 
     @KafkaListener(topics = "payments", groupId = "payment-group")
     public void consume(MessagePaymentDto messagePaymentDto) throws JsonProcessingException, TelegramApiException {
+        tgBotService.executeMessage("😉 Деньги получены!\n Пытаемся положить их к тебе на счет 😏", Objects.requireNonNull(messagePaymentDto.getChatId()));
+
         var message = "";
-        try {
-            var yoomoneyPaymentId = paymentService.pay(messagePaymentDto.getPaymentId());
-            message = "🎉Оплата прошла!🎉\nОперация в сервисе: " + messagePaymentDto.getPaymentId()
-                    + "\nОперация в ЮMoney: " + yoomoneyPaymentId;
-        } catch (Exception e) {
-            message = "😧Ошибка операции!😢\nОбратитесь к Администрации MobilePay";
-            e.printStackTrace();
+        var yoomoneyPaymentId = paymentService.pay(messagePaymentDto.getPaymentId());
+        if (yoomoneyPaymentId.startsWith("failed:")) {
+            message = "😧 Оплата не прошла после нескольких попыток!\nПопробуйте позже или обратитесь к поддержке\n"
+                    + yoomoneyPaymentId;
+        } else {
+            message = "🎉 Оплата прошла успешно! 🎉\nОперация в ЮMoney: " + yoomoneyPaymentId;
         }
+
+        message += "\nОперация в сервисе: " + messagePaymentDto.getPaymentId();
 
         tgBotService.executeMessage(message, Objects.requireNonNull(messagePaymentDto.getChatId()));
     }

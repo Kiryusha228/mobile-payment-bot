@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.client.CrudClient;
 import org.example.client.YoomoneyClient;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +17,13 @@ public class PaymentService {
 
     @Retryable(
             retryFor = {Exception.class},
-            maxAttempts = 3,
+            maxAttempts = 5,
             backoff = @Backoff(delay = 2000, multiplier = 2)
     )
     public String processPaymentWithRetry(String requestId) {
         var processResponse = yoomoneyClient.processRequestPayment(requestId);
         if (!processResponse.getStatus().equals("success")) {
-            throw new RuntimeException("Payment processing failed");
+            throw new RuntimeException("Не удалось подтвердить оплату!");
         }
         return processResponse.getRequest_id();
     }
@@ -40,10 +41,11 @@ public class PaymentService {
             throw new RuntimeException("Не удалось запросить оплату!");
         }
 
-        try {
-            return processPaymentWithRetry(requestResponse.getRequest_id());
-        } catch (Exception e) {
-            throw new RuntimeException("Не удалось подтвердить оплату!", e);
-        }
+        return processPaymentWithRetry(requestResponse.getRequest_id());
+    }
+
+    @Recover
+    public String recover(Exception e, String requestId) {
+        return "failed: " + requestId;
     }
 }
