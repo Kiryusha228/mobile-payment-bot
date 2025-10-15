@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController
 class YoomoneyWebhookController(
     val paymentService: PaymentService,
     val webhookHandlerService: WebhookHandlerService,
-    val yoomoneyProperties: YoomoneyProperties,
     val paymentProducer: PaymentProducer
 ) {
     @PostMapping
@@ -28,7 +27,7 @@ class YoomoneyWebhookController(
         println(params)
 
         val response = webhookHandlerService.parseYoomoneyWebhookResponse(params)
-        if (response.sha1Hash != yoomoneyProperties.webhookSecret){
+        if (response.sha1Hash != webhookHandlerService.calculateSHA1Hash(params)){
             return ResponseEntity("ERROR", HttpStatus.LOCKED)
         }
 
