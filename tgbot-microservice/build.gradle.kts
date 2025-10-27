@@ -27,6 +27,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     //kafka
     implementation("org.springframework.kafka:spring-kafka")
+
+    implementation(project(":core"))
 }
 
 tasks.test {

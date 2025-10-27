@@ -1,12 +1,11 @@
 package org.example.model.entity
 
 import jakarta.persistence.*
-import org.example.enums.Provider
+import enums.Provider
 
 @Entity
 @Table(name = "phone")
 class PhoneEntity(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

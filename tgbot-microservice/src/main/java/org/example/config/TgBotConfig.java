@@ -14,8 +14,11 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class TgBotConfig {
     private final TgBotService tgBotService;
 
+    // private val log = KotlinLogging.logger {}
+
     @EventListener({ContextRefreshedEvent.class})
     public void init() {
+        // runCatching for kotlin
         try {
             var tgApi = new TelegramBotsApi(DefaultBotSession.class);
             tgApi.registerBot(tgBotService);

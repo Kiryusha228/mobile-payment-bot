@@ -1,6 +1,6 @@
 package org.example.service
 
-import org.example.model.dto.YoomoneyWebhookResponse
+import model.dto.YoomoneyWebhookResponse
 import org.example.properties.YoomoneyProperties
 import org.springframework.stereotype.Service
 import java.security.MessageDigest
@@ -14,6 +14,7 @@ class WebhookHandlerService(
 
     fun parseYoomoneyWebhookResponse(params: Map<String, String>) : YoomoneyWebhookResponse =
         params.let {
+            // todo: enum
             val (phone, user) = it["label"].orEmpty().parsePhoneAndUser()
             YoomoneyWebhookResponse(
                 status = it["notification_type"] ?: "unknown",
@@ -47,6 +48,7 @@ class WebhookHandlerService(
         ).joinToString("&") { it ?: "" }
 
 
+    // todo: check existing methods
     fun calculateSHA1Hash(params: Map<String, String>): String {
         val data = buildVerificationString(params)
         val digest = MessageDigest.getInstance("SHA-1")

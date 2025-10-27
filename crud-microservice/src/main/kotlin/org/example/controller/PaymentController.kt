@@ -1,7 +1,7 @@
 package org.example.controller
 
-import org.example.model.dto.CreatePaymentDto
-import org.example.model.dto.PaymentDto
+import model.dto.CreatePaymentDto
+import model.dto.PaymentDto
 import org.example.model.entity.PaymentEntity
 import org.example.service.PaymentService
 import org.springframework.web.bind.annotation.*

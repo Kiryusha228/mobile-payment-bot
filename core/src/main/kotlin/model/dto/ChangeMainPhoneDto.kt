@@ -1,4 +1,4 @@
-package org.example.model.dto
+package model.dto
 
 data class ChangeMainPhoneDto(
     val chatId: Long,

@@ -1,6 +1,6 @@
 package org.example.kafka.producer
 
-import org.example.model.dto.MessagePaymentDto
+import model.dto.MessagePaymentDto
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 

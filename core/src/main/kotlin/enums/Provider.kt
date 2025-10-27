@@ -1,4 +1,4 @@
-package org.example.enums
+package enums
 
 enum class Provider {
     T2,

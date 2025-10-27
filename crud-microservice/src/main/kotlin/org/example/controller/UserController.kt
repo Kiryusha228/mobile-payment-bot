@@ -1,6 +1,6 @@
 package org.example.controller
 
-import org.example.model.dto.CreateUserDto
+import model.dto.CreateUserDto
 import org.example.model.entity.UserEntity
 import org.example.service.UserService
 import org.springframework.web.bind.annotation.*

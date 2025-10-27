@@ -1,8 +1,8 @@
-package org.example.model.entity
+package model.entity
 
 import java.time.LocalDateTime
 
-class PaymentEntity(
+data class PaymentEntity(
 
     var id: Long? = null,
     var user: UserEntity? = null,

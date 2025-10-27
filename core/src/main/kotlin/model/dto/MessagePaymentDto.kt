@@ -1,4 +1,4 @@
-package org.example.model.dto
+package model.dto
 
 data class MessagePaymentDto(
     val chatId: Long? = null,

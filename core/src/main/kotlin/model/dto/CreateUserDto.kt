@@ -1,4 +1,4 @@
-package org.example.model.dto
+package model.dto
 
 data class CreateUserDto(
     val chatId: Long,

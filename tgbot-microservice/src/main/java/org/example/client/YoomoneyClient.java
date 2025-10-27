@@ -2,9 +2,9 @@ package org.example.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import model.dto.PaymentResponseDto;
 import org.example.config.ObjectMapperConfig;
 import org.example.config.WebClientConfig;
-import org.example.model.dto.PaymentResponseDto;
 import org.example.properties.BeelineProperties;
 import org.example.properties.T2Properties;
 import org.example.properties.YoomoneyProperties;
@@ -23,6 +23,8 @@ public class YoomoneyClient {
     private final BeelineProperties beelineProperties;
 
     public PaymentResponseDto requestPaymentT2(String phone, String sum) throws JsonProcessingException {
+        // todo: UriBuilder
+
         return webClient.getWebClient()
                 .post()
                 .uri(yoomoneyProperties.getRequestPaymentLink())

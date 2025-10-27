@@ -42,6 +42,10 @@ dependencies {
     kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
     //kafka
     implementation("org.springframework.kafka:spring-kafka")
+
+    implementation(project(":core"))
+    // kotlin
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
 }
 
 

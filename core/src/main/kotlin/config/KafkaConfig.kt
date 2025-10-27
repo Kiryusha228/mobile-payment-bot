@@ -1,10 +1,10 @@
-package org.example.config
+package config
 
+import model.dto.MessagePaymentDto
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.example.model.dto.MessagePaymentDto
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,15 +22,15 @@ class KafkaConfig {
     private lateinit var bootstrapServers: String
 
     @Bean
-    fun producerFactory(): ProducerFactory<String, MessagePaymentDto> {
-        val props = mapOf(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java,
-            JsonSerializer.ADD_TYPE_INFO_HEADERS to false
+    fun producerFactory(): ProducerFactory<String, MessagePaymentDto> =
+        DefaultKafkaProducerFactory(
+            mapOf(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java,
+                JsonSerializer.ADD_TYPE_INFO_HEADERS to false
+            )
         )
-        return DefaultKafkaProducerFactory(props)
-    }
 
     @Bean
     fun kafkaTemplate(): KafkaTemplate<String, MessagePaymentDto> =
@@ -52,9 +52,8 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, MessagePaymentDto> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, MessagePaymentDto>()
-        factory.consumerFactory = consumerFactory()
-        return factory
-    }
+    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, MessagePaymentDto> =
+        ConcurrentKafkaListenerContainerFactory<String, MessagePaymentDto>().apply {
+            consumerFactory = consumerFactory()
+        }
 }

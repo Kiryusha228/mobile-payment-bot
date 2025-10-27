@@ -1,7 +1,7 @@
 package org.example.service
 
+import model.dto.CreateUserDto
 import org.example.mapper.UserMapper
-import org.example.model.dto.CreateUserDto
 import org.example.model.entity.UserEntity
 import org.example.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -22,7 +22,8 @@ class UserService(
     }
 
     fun getUserIdByChatId(chatId: Long): Long =
-        userRepository.findByChatId(chatId).id?: throw IllegalArgumentException("Пользователь не найден")
+        userRepository.findByChatId(chatId).id
+            ?: throw IllegalArgumentException("Пользователь не найден")
 
     @Transactional
     fun deleteUserById(userId: Long) {

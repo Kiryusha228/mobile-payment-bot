@@ -2,10 +2,9 @@ package org.example.client;
 
 import lombok.RequiredArgsConstructor;
 
+import model.dto.*;
+import model.entity.*;
 import org.example.config.WebClientConfig;
-import org.example.model.dto.*;
-import org.example.model.entity.PhoneEntity;
-import org.example.model.entity.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +36,11 @@ public class CrudClient {
                 .bodyToMono(PhoneEntity.class)
                 .block();
     }
+
+//    @Patch("url..", produses = "")
+//    fun change(
+//           @Body dto: ChangeMainPhoneDto
+//    ): Mono<...>
 
     public void changeMainPhone(ChangeMainPhoneDto changeMainPhoneDto) {
         webClient.getWebClient()

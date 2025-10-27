@@ -1,7 +1,7 @@
 package org.example.mapper
 
-import org.example.model.dto.CreatePaymentDto
-import org.example.model.dto.PaymentDto
+import model.dto.CreatePaymentDto
+import model.dto.PaymentDto
 import org.example.model.entity.PaymentEntity
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping

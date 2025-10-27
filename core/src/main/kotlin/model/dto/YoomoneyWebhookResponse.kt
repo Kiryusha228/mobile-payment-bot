@@ -1,4 +1,4 @@
-package org.example.model.dto
+package model.dto
 
 import java.time.LocalDateTime
 

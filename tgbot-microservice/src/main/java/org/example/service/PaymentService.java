@@ -33,6 +33,7 @@ public class PaymentService {
         var phone = crudClient.getPhoneById(payment.getPhoneId());
 
         var requestResponse = switch (phone.getProvider()) {
+            // todo: interface
             case BEELINE -> yoomoneyClient.requestPaymentBeeline(phone.getPhoneNumber(), String.valueOf(payment.getAmount()));
             case T2 -> yoomoneyClient.requestPaymentT2(phone.getPhoneNumber(), String.valueOf(payment.getAmount()));
         };

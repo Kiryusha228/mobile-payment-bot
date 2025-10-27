@@ -1,8 +1,7 @@
 package org.example.kafka.consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.MessagePaymentDto;
+import model.dto.MessagePaymentDto;
 import org.example.service.PaymentService;
 import org.example.service.TgBotService;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,6 +23,8 @@ public class PaymentConsumer {
 
             var yoomoneyPaymentId = paymentService.pay(messagePaymentDto.getPaymentId());
             String message;
+
+            // todo: stringbuilder
 
             if (yoomoneyPaymentId.startsWith("failed:")) {
                 message = "😧 Оплата не прошла после нескольких попыток!\nПопробуйте позже или обратитесь в поддержку.\n"

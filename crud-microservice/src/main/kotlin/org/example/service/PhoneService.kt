@@ -1,9 +1,9 @@
 package org.example.service
 
 import org.example.mapper.PhoneMapper
-import org.example.model.dto.ChangeMainPhoneDto
-import org.example.model.dto.CreatePhoneDto
-import org.example.model.dto.PhoneDto
+import model.dto.ChangeMainPhoneDto
+import model.dto.CreatePhoneDto
+import model.dto.PhoneDto
 import org.example.model.entity.PhoneEntity
 import org.example.repository.PhoneRepository
 import org.example.repository.UserRepository
@@ -17,25 +17,32 @@ class PhoneService (
     val phoneMapper: PhoneMapper
 ) {
     @Transactional
-    fun createPhone(createPhoneDto: CreatePhoneDto) : PhoneEntity {
-        val phoneEntity = phoneMapper.toEntity(createPhoneDto)
-        phoneEntity.user = userRepository.findById(createPhoneDto.userId).get()
-        return phoneRepository.save(phoneEntity)
-    }
+    fun createPhone(createPhoneDto: CreatePhoneDto) : PhoneEntity =
+        phoneMapper.toEntity(createPhoneDto).apply {
+            user = userRepository.findById(createPhoneDto.userId).get()
+        }.let {
+            phoneRepository.save(it)
+        }
 
     @Transactional
     fun changeMainPhone(changeMainPhoneDto: ChangeMainPhoneDto) {
-        val userId = userRepository.findByChatId(changeMainPhoneDto.chatId).id
-        val phoneOptional = phoneRepository.findFirstByUserIdAndIsMainTrue(userId)
+        val phoneOptional = phoneRepository.findFirstByUserIdAndIsMainTrue(
+            userId = userRepository.findByChatId(changeMainPhoneDto.chatId).id
+        )
+
         if (phoneOptional.isPresent) {
-            val phone = phoneOptional.get()
-            phone.isMain = false
-            phoneRepository.save(phone)
+            phoneOptional.get().apply {
+                isMain = false
+            }.let {
+                phoneRepository.save(it)
+            }
         }
 
-        val phone = phoneRepository.findById(changeMainPhoneDto.phoneId).get()
-        phone.isMain = true
-        phoneRepository.save(phone)
+        phoneRepository.findById(changeMainPhoneDto.phoneId).get().apply {
+            isMain = true
+        }.let {
+            phoneRepository.save(it)
+        }
     }
 
     fun getMainPhone(chatId: Long) : PhoneDto {
@@ -47,6 +54,24 @@ class PhoneService (
     fun getPhonesByChatId(chatId: Long): List<PhoneDto> {
         val userId = userRepository.findByChatId(chatId).id
         val phoneEntityList = phoneRepository.findAllByUser_Id(userId)
+
+        val sb = StringBuilder()
+
+        sb.append("")
+        sb.append("")
+        sb.append("")
+        sb.append("")
+
+
+        val str = buildString {
+            append(sb)
+            append(sb)
+            append(sb)
+            append(sb)
+            append(sb)
+        }
+
+
         return phoneMapper.toDtoList(phoneEntityList)
     }
 

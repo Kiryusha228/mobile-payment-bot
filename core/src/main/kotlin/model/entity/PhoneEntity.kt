@@ -1,8 +1,8 @@
-package org.example.model.entity
+package model.entity
 
-import org.example.enums.Provider
+import enums.Provider
 
-class PhoneEntity(
+data class PhoneEntity(
     var id: Long? = null,
     var user: UserEntity? = null,
     var phoneNumber: String,

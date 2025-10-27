@@ -1,11 +1,11 @@
 package org.example.service;
 
 import org.example.client.CrudClient;
-import org.example.enums.Provider;
-import org.example.enums.UserState;
-import org.example.model.dto.ChangeMainPhoneDto;
-import org.example.model.dto.CreatePhoneDto;
-import org.example.model.dto.CreateUserDto;
+import enums.Provider;
+import enums.UserState;
+import model.dto.ChangeMainPhoneDto;
+import model.dto.CreatePhoneDto;
+import model.dto.CreateUserDto;
 import org.example.properties.TgBotProperties;
 import org.example.properties.YoomoneyProperties;
 import org.springframework.stereotype.Service;
@@ -131,6 +131,7 @@ public class TgBotService extends TelegramLongPollingBot {
         edit.setChatId(msg.getChatId());
         edit.setMessageId(msg.getMessageId());
         edit.setText(text);
+        //markup?.edit.setReplyMarkup(markup)
         if (markup != null) edit.setReplyMarkup(markup);
         execute(edit);
     }
@@ -172,7 +173,7 @@ public class TgBotService extends TelegramLongPollingBot {
                             .callbackData("pay_" + phone.getId())
                             .build(),
                     InlineKeyboardButton.builder()
-                            .text(phone.getMain() ? "🟢" : "⚪️")
+                            .text(phone.isMain() ? "🟢" : "⚪️")
                             .callbackData("main_" + phone.getId())
                             .build()
             ));
@@ -333,7 +334,7 @@ public class TgBotService extends TelegramLongPollingBot {
                             .callbackData("pay_" + phone.getId())
                             .build(),
                     InlineKeyboardButton.builder()
-                            .text(phone.getMain() ? "🟢" : "⚪️")
+                            .text(phone.isMain() ? "🟢" : "⚪️")
                             .callbackData("main_" + phone.getId())
                             .build()
             ));

@@ -1,6 +1,6 @@
-package org.example.model.dto
+package model.dto
 
-import org.example.enums.Provider
+import enums.Provider
 
 data class PhoneDto (
     val id : Long,

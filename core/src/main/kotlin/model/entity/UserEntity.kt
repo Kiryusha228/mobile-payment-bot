@@ -1,6 +1,6 @@
-package org.example.model.entity
+package model.entity
 
-class UserEntity(
+data class UserEntity(
     var id: Long? = null,
     var chatId: Long,
     var username: String
