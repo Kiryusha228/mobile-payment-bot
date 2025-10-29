@@ -6,6 +6,9 @@ COPY build.gradle.kts build.gradle.kts
 COPY settings.gradle.kts settings.gradle.kts
 COPY .env .env
 
+COPY core/src ./core/src
+COPY core/build.gradle.kts ./core/
+
 COPY crud-microservice/src/main/resources crud-microservice/src/main/resources
 COPY crud-microservice/src crud-microservice/src
 COPY crud-microservice/build.gradle.kts crud-microservice/build.gradle.kts

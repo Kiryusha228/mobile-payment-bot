@@ -14,7 +14,7 @@ services:
       - 'POSTGRES_PASSWORD=${DB_PASSWORD}'
       - 'POSTGRES_DB=${DB_NAME}'
     volumes:
-      - payment-db:/var/lib/postgresql/data
+      - payment-db:/var/lib/postgresql/18/main
 
   crud-microservice:
       container_name: 'crud-microservice'

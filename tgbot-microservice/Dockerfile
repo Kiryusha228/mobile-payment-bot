@@ -6,6 +6,9 @@ COPY build.gradle.kts .
 COPY settings.gradle.kts .
 COPY .env .
 
+COPY core/src ./core/src
+COPY core/build.gradle.kts ./core/
+
 COPY tgbot-microservice/src ./tgbot-microservice/src
 COPY tgbot-microservice/build.gradle.kts ./tgbot-microservice/
 

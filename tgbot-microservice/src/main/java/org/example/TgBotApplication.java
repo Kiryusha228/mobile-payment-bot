@@ -1,10 +1,13 @@
 package org.example;
 
+import config.KafkaConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
+@Import(KafkaConfig.class)
 @ConfigurationPropertiesScan
 public class TgBotApplication {
     public static void main(String[] args) {

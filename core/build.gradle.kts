@@ -1,7 +1,8 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("plugin.spring") version "2.1.0"
     id("io.spring.dependency-management") version "1.1.6"
+    id("java-library")
 }
 
 group = "org.example"
@@ -19,12 +20,14 @@ dependencyManagement {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib"))
     //spring
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     //kafka
     implementation("org.springframework.kafka:spring-kafka")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 }
 
 
@@ -34,4 +37,9 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
