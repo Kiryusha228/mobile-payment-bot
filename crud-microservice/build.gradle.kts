@@ -1,58 +1,40 @@
 plugins {
-    kotlin("jvm")
-    kotlin("kapt")
-    kotlin("plugin.spring") version "2.1.0"
-    kotlin("plugin.jpa") version "2.1.0"
-    id("org.springframework.boot") version "3.3.3"
-    id("io.spring.dependency-management") version "1.1.6"
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.kotlin.jpa)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
 
 kapt {
     correctErrorTypes = true
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    implementation(kotlin("reflect"))
-    //spring
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    //lombok
-    implementation("org.projectlombok:lombok:1.18.34")
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
-    //postgres
-    implementation("org.postgresql:postgresql")
-    //tests
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    //swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    //mapstruct
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
-    //kafka
-    implementation("org.springframework.kafka:spring-kafka")
-
     implementation(project(":core"))
-    // kotlin
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
+
+    implementation(libs.bundles.kotlin.common)
+    implementation(libs.bundles.spring.web)
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.postgresql)
+    implementation(libs.kotlin.logging)
+    implementation(libs.springdoc.openapi)
+    implementation(libs.spring.kafka)
+
+    implementation(libs.mapstruct)
+    kapt(libs.mapstruct.processor)
+
+    testImplementation(libs.bundles.testing)
 }
-
-
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(17)
 }

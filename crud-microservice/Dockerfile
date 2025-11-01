@@ -2,9 +2,10 @@ FROM gradle:jdk17-focal AS build
 
 WORKDIR /app
 
-COPY build.gradle.kts build.gradle.kts
-COPY settings.gradle.kts settings.gradle.kts
-COPY .env .env
+COPY gradle gradle
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY .env .
 
 COPY core/src ./core/src
 COPY core/build.gradle.kts ./core/

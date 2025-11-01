@@ -1,0 +1,56 @@
+[versions]
+kotlin = "2.1.0"
+spring-boot = "3.3.3"
+spring-dependency-management = "1.1.6"
+
+jackson-kotlin = "2.17.2"
+lombok = "1.18.34"
+junit = "5.10.0"
+mapstruct = "1.5.5.Final"
+kotlin-logging = "7.0.13"
+telegrambots = "6.9.7.1"
+springdoc = "2.6.0"
+
+[libraries]
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter"}
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web"}
+spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux"}
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa"}
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test"}
+
+spring-kafka = { module = "org.springframework.kafka:spring-kafka"}
+
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
+
+postgresql = { module = "org.postgresql:postgresql"}
+
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-bom = { module = "org.junit:junit-bom"}
+
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+telegrambots = { module = "org.telegram:telegrambots", version.ref = "telegrambots" }
+springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+[bundles]
+
+kotlin-common = ["kotlin-stdlib", "kotlin-reflect"]
+spring-web = ["spring-boot-starter-web", "jackson-module-kotlin"]
+spring-webflux = ["spring-boot-starter-webflux", "jackson-module-kotlin"]
+testing = ["junit-jupiter", "spring-boot-starter-test"]
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt"}
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
