@@ -12,7 +12,7 @@ class WebhookHandlerService(
     val yoomoneyProperties: YoomoneyProperties
 ) {
 
-    fun parseYoomoneyWebhookResponse(params: Map<String, String>) : YoomoneyWebhookResponse =
+    fun parseYoomoneyWebhookResponse(params: Map<String, String>): YoomoneyWebhookResponse =
         params.let {
             // todo: enum
             val (phone, user) = it["label"].orEmpty().parsePhoneAndUser()
@@ -20,7 +20,9 @@ class WebhookHandlerService(
                 status = it["notification_type"] ?: "unknown",
                 amount = params["amount"]?.toDouble() ?: 0.0,
                 operationId = it["operation_id"].orEmpty(),
-                dateTime = it["datetime"].orEmpty().let { it1 -> LocalDateTime.parse(it1, DateTimeFormatter.ISO_DATE_TIME) },
+                dateTime = it["datetime"].orEmpty().let { it1 ->
+                    LocalDateTime.parse(it1, DateTimeFormatter.ISO_DATE_TIME)
+                },
                 sha1Hash = it["sha1_hash"].orEmpty(),
                 phoneId = phone,
                 userId = user
@@ -35,16 +37,16 @@ class WebhookHandlerService(
     }
 
     private fun buildVerificationString(params: Map<String, String>): String =
-         listOf(
-             params["notification_type"],
-             params["operation_id"],
-             params["amount"],
-             params["currency"],
-             params["datetime"],
-             params["sender"],
-             params["codepro"],
-             yoomoneyProperties.webhookSecret,
-             params["label"]
+        listOf(
+            params["notification_type"],
+            params["operation_id"],
+            params["amount"],
+            params["currency"],
+            params["datetime"],
+            params["sender"],
+            params["codepro"],
+            yoomoneyProperties.webhookSecret,
+            params["label"]
         ).joinToString("&") { it ?: "" }
 
 

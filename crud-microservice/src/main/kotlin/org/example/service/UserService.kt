@@ -13,20 +13,19 @@ class UserService(
     val userMapper: UserMapper
 ) {
     @Transactional
-    fun createUser(createUserDto: CreateUserDto): UserEntity {
-        return userRepository.save(userMapper.toEntity(createUserDto))
-    }
+    fun createUser(createUserDto: CreateUserDto): UserEntity =
+        userRepository.save(userMapper.toEntity(createUserDto))
 
-    fun getUserById(userId: Long): UserEntity {
-        return userRepository.findById(userId).get()
-    }
+
+    fun getUserById(userId: Long): UserEntity =
+        userRepository.findById(userId).get()
 
     fun getUserIdByChatId(chatId: Long): Long =
         userRepository.findByChatId(chatId).id
             ?: throw IllegalArgumentException("Пользователь не найден")
 
     @Transactional
-    fun deleteUserById(userId: Long) {
+    fun deleteUserById(userId: Long) =
         userRepository.deleteById(userId)
-    }
+
 }

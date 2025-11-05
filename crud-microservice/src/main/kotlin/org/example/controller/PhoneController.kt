@@ -10,36 +10,36 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/phone")
-class PhoneController (
+class PhoneController(
     private val phoneService: PhoneService
 ) {
     @PostMapping("/create")
-    fun createPhone(@RequestBody createPhoneDto: CreatePhoneDto) : PhoneEntity {
-        return phoneService.createPhone(createPhoneDto)
-    }
+    fun createPhone(@RequestBody createPhoneDto: CreatePhoneDto): PhoneEntity =
+        phoneService.createPhone(createPhoneDto)
+
 
     @PatchMapping("/main/change")
-    fun changeMainPhone(@RequestBody changeMainPhoneDto: ChangeMainPhoneDto) {
-        return phoneService.changeMainPhone(changeMainPhoneDto)
-    }
+    fun changeMainPhone(@RequestBody changeMainPhoneDto: ChangeMainPhoneDto) =
+        phoneService.changeMainPhone(changeMainPhoneDto)
+
 
     @GetMapping("/get/main/{chatId}")
-    fun getMainPhone(@PathVariable chatId: Long) : PhoneDto {
-        return phoneService.getMainPhone(chatId)
-    }
+    fun getMainPhone(@PathVariable chatId: Long): PhoneDto =
+        phoneService.getMainPhone(chatId)
+
 
     @GetMapping("/get/phones/{chatId}")
-    fun getPhonesByChatId(@PathVariable chatId: Long) : List<PhoneDto> {
-        return phoneService.getPhonesByChatId(chatId)
-    }
+    fun getPhonesByChatId(@PathVariable chatId: Long): List<PhoneDto> =
+        phoneService.getPhonesByChatId(chatId)
+
 
     @GetMapping("/get/{phoneId}")
-    fun getPhoneById(@PathVariable phoneId: Long): PhoneEntity {
-        return phoneService.getPhoneById(phoneId)
-    }
+    fun getPhoneById(@PathVariable phoneId: Long): PhoneEntity =
+        phoneService.getPhoneById(phoneId)
+
 
     @DeleteMapping("/delete/{phoneId}")
-    fun deleteUserById(@PathVariable phoneId: Long) {
+    fun deleteUserById(@PathVariable phoneId: Long) =
         phoneService.deletePhoneById(phoneId)
-    }
+
 }

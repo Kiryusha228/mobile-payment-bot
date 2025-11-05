@@ -11,21 +11,21 @@ class UserController (
     val userService: UserService
 ) {
     @PostMapping("/create")
-    fun createUser(@RequestBody createUserDto: CreateUserDto) : UserEntity {
-        return userService.createUser(createUserDto)
-    }
+    fun createUser(@RequestBody createUserDto: CreateUserDto) : UserEntity =
+        userService.createUser(createUserDto)
+
 
     @GetMapping("/get/{userId}")
-    fun getUserById(@PathVariable userId: Long): UserEntity {
-        return userService.getUserById(userId)
-    }
+    fun getUserById(@PathVariable userId: Long): UserEntity =
+        userService.getUserById(userId)
+
 
     @GetMapping("/get/id/{chatId}")
     fun getUserIdByChatId(@PathVariable chatId: Long): Long =
         userService.getUserIdByChatId(chatId)
 
     @DeleteMapping("/delete/{userId}")
-    fun deleteUserById(@PathVariable userId: Long) {
+    fun deleteUserById(@PathVariable userId: Long) =
         userService.deleteUserById(userId)
-    }
+
 }

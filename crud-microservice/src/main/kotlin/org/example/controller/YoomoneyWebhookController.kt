@@ -24,9 +24,6 @@ class YoomoneyWebhookController(
 
     @PostMapping
     fun handleWebhook(@RequestParam params: Map<String, String>): ResponseEntity<String> {
-
-        //println(params)
-
         log.info { params }
 
         val response = webhookHandlerService.parseYoomoneyWebhookResponse(params)

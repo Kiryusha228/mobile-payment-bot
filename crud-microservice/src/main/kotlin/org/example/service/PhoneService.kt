@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class PhoneService (
+class PhoneService(
     val phoneRepository: PhoneRepository,
     val userRepository: UserRepository,
     val phoneMapper: PhoneMapper
 ) {
     @Transactional
-    fun createPhone(createPhoneDto: CreatePhoneDto) : PhoneEntity =
+    fun createPhone(createPhoneDto: CreatePhoneDto): PhoneEntity =
         phoneMapper.toEntity(createPhoneDto).apply {
             user = userRepository.findById(createPhoneDto.userId).get()
         }.let {
@@ -45,42 +45,28 @@ class PhoneService (
         }
     }
 
-    fun getMainPhone(chatId: Long) : PhoneDto {
-        val userId = userRepository.findByChatId(chatId).id
-        val phone = phoneRepository.findFirstByUserIdAndIsMainTrue(userId).get()
-        return phoneMapper.toDto(phone)
-    }
-
-    fun getPhonesByChatId(chatId: Long): List<PhoneDto> {
-        val userId = userRepository.findByChatId(chatId).id
-        val phoneEntityList = phoneRepository.findAllByUser_Id(userId)
-
-        val sb = StringBuilder()
-
-        sb.append("")
-        sb.append("")
-        sb.append("")
-        sb.append("")
-
-
-        val str = buildString {
-            append(sb)
-            append(sb)
-            append(sb)
-            append(sb)
-            append(sb)
+    fun getMainPhone(chatId: Long): PhoneDto =
+        phoneRepository.findFirstByUserIdAndIsMainTrue(
+            userRepository.findByChatId(chatId).id
+        ).let {
+            phoneMapper.toDto(it.get())
         }
 
 
-        return phoneMapper.toDtoList(phoneEntityList)
-    }
+    fun getPhonesByChatId(chatId: Long): List<PhoneDto> =
+        phoneRepository.findAllByUser_Id(
+            userRepository.findByChatId(chatId).id
+        ).let {
+            phoneMapper.toDtoList(it)
+        }
 
-    fun getPhoneById(phoneId: Long): PhoneEntity {
-        return phoneRepository.findById(phoneId).get()
-    }
+
+    fun getPhoneById(phoneId: Long): PhoneEntity =
+        phoneRepository.findById(phoneId).get()
+
 
     @Transactional
-    fun deletePhoneById(phoneId: Long) {
+    fun deletePhoneById(phoneId: Long) =
         phoneRepository.deleteById(phoneId)
-    }
+
 }
