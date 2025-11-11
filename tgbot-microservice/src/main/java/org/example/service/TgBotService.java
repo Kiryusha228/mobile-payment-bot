@@ -1,5 +1,7 @@
 package org.example.service;
 
+import enums.WebhookLabelParams;
+import model.dto.PhoneDto;
 import org.example.client.CrudClient;
 import enums.Provider;
 import enums.UserState;
@@ -165,6 +167,14 @@ public class TgBotService extends TelegramLongPollingBot {
             return;
         }
 
+        execute(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text("📱 Ваши телефоны:")
+                .replyMarkup(BuildPhoneButtons(phones))
+                .build());
+    }
+
+    private InlineKeyboardMarkup BuildPhoneButtons(List<PhoneDto> phones) {
         var rows = new ArrayList<List<InlineKeyboardButton>>();
         for (var phone : phones) {
             rows.add(List.of(
@@ -179,13 +189,7 @@ public class TgBotService extends TelegramLongPollingBot {
             ));
         }
 
-        var markup = InlineKeyboardMarkup.builder().keyboard(rows).build();
-
-        execute(SendMessage.builder()
-                .chatId(chatId.toString())
-                .text("📱 Ваши телефоны:")
-                .replyMarkup(markup)
-                .build());
+        return InlineKeyboardMarkup.builder().keyboard(rows).build();
     }
 
     private void sendProviderChoice(Long chatId) throws TelegramApiException {
@@ -276,10 +280,15 @@ public class TgBotService extends TelegramLongPollingBot {
         amount += amount * 0.031; // комиссия
 
         var markup = new InlineKeyboardMarkup();
-        var link = String.format(
-                yoomoneyProperties.getPaymentLink() + "%s&label=phone%s!user%s",
-                amount, phoneId, userId
-        );
+        var link = yoomoneyProperties.getPaymentLink() +
+                amount +
+                "&label=" +
+                WebhookLabelParams.PHONE.getValue() +
+                phoneId +
+                WebhookLabelParams.DELIMITER.getValue() +
+                WebhookLabelParams.USER.getValue() +
+                userId;
+
 
         var payBtn = InlineKeyboardButton.builder()
                 .text("💳 Оплатить " + String.format("%.2f ₽", amount))
@@ -326,27 +335,11 @@ public class TgBotService extends TelegramLongPollingBot {
             return;
         }
 
-        var rows = new ArrayList<List<InlineKeyboardButton>>();
-        for (var phone : phones) {
-            rows.add(List.of(
-                    InlineKeyboardButton.builder()
-                            .text("📞 +7" + phone.getPhoneNumber())
-                            .callbackData("pay_" + phone.getId())
-                            .build(),
-                    InlineKeyboardButton.builder()
-                            .text(phone.isMain() ? "🟢" : "⚪️")
-                            .callbackData("main_" + phone.getId())
-                            .build()
-            ));
-        }
-
-        var markup = InlineKeyboardMarkup.builder().keyboard(rows).build();
-
         var edit = new EditMessageText();
         edit.setChatId(chatId);
         edit.setMessageId(messageId);
         edit.setText("📱 Ваши телефоны:");
-        edit.setReplyMarkup(markup);
+        edit.setReplyMarkup(BuildPhoneButtons(phones));
         execute(edit);
     }
 
